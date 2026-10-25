@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a2a-agentcard-audit"
+version = "0.1.0"
+description = "Lint, security-audit, sign and verify A2A Agent Cards (A2A 1.0)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Dr. Shriram K Vasudevan" }]
+keywords = ["a2a", "agent2agent", "agent-card", "jws", "jcs", "rfc8785", "security", "aaif"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Environment :: Console",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+[project.optional-dependencies]
+crypto = ["cryptography>=41"]
+
+[project.urls]
+Homepage = "https://github.com/shriramkv/a2a-agentcard-audit"
+Specification = "https://a2a-protocol.org/latest/specification/"
+
+[project.scripts]
+a2a-agentcard-audit = "a2a_agentcard_audit.cli:main"
+
+[tool.setuptools]
+packages = ["a2a_agentcard_audit"]
+
+[tool.setuptools.package-data]
+a2a_agentcard_audit = ["samples/*.json"]

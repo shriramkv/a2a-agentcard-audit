@@ -1,0 +1,79 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Weather Agent",
+  "description": "Gives current weather and three-day forecasts for any city.",
+  "url": "https://weather.example.org/a2a",
+  "preferredTransport": "JSONRPC",
+  "additionalInterfaces": [
+    {
+      "url": "https://weather.example.org/a2a",
+      "transport": "JSONRPC"
+    },
+    {
+      "url": "https://weather.example.org/a2a/rest",
+      "transport": "HTTP+JSON"
+    }
+  ],
+  "version": "1.4.0",
+  "capabilities": {
+    "streaming": true,
+    "stateTransitionHistory": false
+  },
+  "supportsAuthenticatedExtendedCard": false,
+  "securitySchemes": {
+    "oauth": {
+      "type": "oauth2",
+      "flows": {
+        "authorizationCode": {
+          "authorizationUrl": "https://auth.example.org/authorize",
+          "tokenUrl": "https://auth.example.org/token",
+          "scopes": {
+            "weather.read": "Read weather"
+          }
+        },
+        "clientCredentials": {
+          "tokenUrl": "https://auth.example.org/token",
+          "scopes": {
+            "weather.read": "Read weather"
+          }
+        }
+      }
+    },
+    "key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-API-Key"
+    }
+  },
+  "security": [
+    {
+      "oauth": [
+        "weather.read"
+      ]
+    },
+    {
+      "key": []
+    }
+  ],
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "forecast",
+      "name": "Forecast",
+      "description": "Three-day forecast for a city.",
+      "tags": [
+        "weather",
+        "forecast"
+      ],
+      "examples": [
+        "Forecast for Coimbatore"
+      ]
+    }
+  ]
+}

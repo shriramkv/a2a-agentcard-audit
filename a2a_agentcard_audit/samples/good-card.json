@@ -1,0 +1,117 @@
+{
+  "name": "Invoice Reconciliation Agent",
+  "description": "Matches supplier invoices against purchase orders and goods receipts, flags price and quantity mismatches, and drafts dispute notes for the accounts payable team.",
+  "supportedInterfaces": [
+    {
+      "url": "https://ap-agent.example.com/a2a/v1",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    },
+    {
+      "url": "https://ap-agent.example.com/a2a/rest",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "provider": {
+    "organization": "Example Finance Ops",
+    "url": "https://www.example.com"
+  },
+  "version": "2.1.0",
+  "documentationUrl": "https://docs.example.com/ap-agent",
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "extendedAgentCard": true
+  },
+  "securitySchemes": {
+    "corp-oauth": {
+      "oauth2SecurityScheme": {
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://login.example.com/oauth2/authorize",
+            "tokenUrl": "https://login.example.com/oauth2/token",
+            "pkceRequired": true,
+            "scopes": {
+              "invoices.read": "Read invoices",
+              "disputes.write": "Draft dispute notes"
+            }
+          }
+        }
+      }
+    },
+    "service-key": {
+      "apiKeySecurityScheme": {
+        "location": "header",
+        "name": "X-API-Key",
+        "description": "For server-to-server callers"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "schemes": {
+        "corp-oauth": {
+          "list": [
+            "invoices.read"
+          ]
+        }
+      }
+    },
+    {
+      "schemes": {
+        "service-key": {}
+      }
+    }
+  ],
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/markdown"
+  ],
+  "skills": [
+    {
+      "id": "three-way-match",
+      "name": "Three-way match",
+      "description": "Compares an invoice with its purchase order and goods receipt and lists every mismatch.",
+      "tags": [
+        "invoices",
+        "purchase-orders",
+        "reconciliation"
+      ],
+      "examples": [
+        "Match invoice INV-2291 against PO-7731."
+      ]
+    },
+    {
+      "id": "dispute-draft",
+      "name": "Dispute note",
+      "description": "Drafts a dispute note to the supplier for a flagged mismatch.",
+      "tags": [
+        "disputes",
+        "suppliers"
+      ],
+      "securityRequirements": [
+        {
+          "schemes": {
+            "corp-oauth": {
+              "list": [
+                "disputes.write"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "iconUrl": "https://ap-agent.example.com/icon.png",
+  "signatures": [
+    {
+      "protected": "eyJhbGciOiJFUzI1NiIsImprdSI6Imh0dHBzOi8vYXAtYWdlbnQuZXhhbXBsZS5jb20vLndlbGwta25vd24vandrcy5qc29uIiwia2lkIjoiYXAtYWdlbnQtMjAyNi0xMCIsInR5cCI6IkpPU0UifQ",
+      "signature": "pbMGNO0fdcfW55RVEfwAEKaYGnawNUFmd5pyadctd8FPa-2GWBmxl-8kzNeazx96YxvGjCM2FWl2LBt9KWLJAA"
+    }
+  ]
+}
