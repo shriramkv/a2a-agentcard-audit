@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pure-python:
+    name: Python ${{ matrix.python-version }} (no optional dependencies)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover -s tests -t . -v
+      - run: python -m a2a_agentcard_audit demo -q
+      - name: The shipped sample verifies with pure-Python crypto
+        run: python -m a2a_agentcard_audit verify a2a_agentcard_audit/samples/good-card.json --jwks a2a_agentcard_audit/samples/jwks.json
+
+  cross-checks:
+    name: Cross-checks against cryptography, rfc8785 and the a2a-python SDK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install cryptography rfc8785 "a2a-sdk[signing]"
+      - name: Tests with every optional cross-check enabled
+        run: python -m unittest discover -s tests -t . -v
+      - name: Same tests with the pure-Python backend forced
+        env:
+          A2A_AUDIT_PURE_PYTHON: "1"
+        run: python -m unittest discover -s tests -t . -v
+      - name: Install and run the console script
+        run: |
+          pip install .
+          a2a-agentcard-audit version
+          a2a-agentcard-audit demo --format markdown >> "$GITHUB_STEP_SUMMARY"
